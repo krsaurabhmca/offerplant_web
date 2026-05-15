@@ -19,39 +19,85 @@
 <?php endif; ?>
 
 <!-- Hero / Slider Section -->
+<?php if (($site['home_hero_type'] ?? 'hero') == 'slider'): ?>
+<!-- Main Slider Section -->
+<section class="hero-slider-section" style="padding: 0; position: relative;">
+    <div class="swiper home-slider">
+        <div class="swiper-wrapper">
+            <?php
+            $slides = mysqli_query($conn, "SELECT * FROM sliders WHERE status = 1 ORDER BY id DESC");
+            if (mysqli_num_rows($slides) > 0):
+                while($s = mysqli_fetch_assoc($slides)):
+            ?>
+            <div class="swiper-slide">
+                <div class="slide-content" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('uploads/<?php echo $s['image']; ?>'); background-size: cover; background-position: center;">
+                    <div class="container">
 
-<?php
-$sliders_query = mysqli_query($conn, "SELECT * FROM sliders WHERE status = 1 ORDER BY id DESC");
-if (mysqli_num_rows($sliders_query) > 0) {
-    echo '<section class="hero-slider" style="position: relative; overflow: hidden;">';
-    while($slide = mysqli_fetch_assoc($sliders_query)) {
-        echo '
-        <div class="slide" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(\'uploads/'.$slide['image'].'\'); background-size: cover; background-position: center; min-height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; color: #fff; padding: 100px 20px;">
-            <div class="container">
-                <h1 data-aos="fade-up" style="-webkit-text-fill-color: #fff; font-size: 3.5rem;">'.$slide['title'].'</h1>
-                <p data-aos="fade-up" style="color: #eee; font-size: 1.2rem; margin: 20px auto 40px; max-width: 800px;">'.$slide['subtitle'].'</p>
-                <div data-aos="fade-up">
-                    <a href="'.$slide['btn_link'].'" class="btn-contact">'.$slide['btn_text'].'</a>
+
+                        <div style="max-width: 800px;" data-aos="fade-up">
+                            <h1 style="font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.1; margin-bottom: 20px; color: #fff;"><?php echo $s['title']; ?></h1>
+                            <p style="font-size: 1.2rem; margin-bottom: 35px; opacity: 0.9; line-height: 1.6;"><?php echo $s['subtitle']; ?></p>
+                            <div class="hero-btns">
+                                <a href="<?php echo $s['btn_link']; ?>" class="btn btn-primary"><?php echo $s['btn_text']; ?> <i class="fas fa-arrow-right"></i></a>
+                                <a href="#contact" class="btn btn-dark">Contact Us</a>
+                            </div>
+
+
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>';
-    }
-    echo '</section>';
-} else {
-?>
-<section class="hero">
+            <?php 
+                endwhile;
+            else:
+                echo '<div class="swiper-slide"><div class="slide-content" style="background: var(--dark); min-height: 100vh; display: flex; align-items: center; justify-content: center; color: #fff;"><h3>Please add sliders in Admin Panel</h3></div></div>';
+            endif;
+            ?>
+        </div>
+        <!-- Add Navigation -->
+        <div class="swiper-button-next" style="color: #fff; background: rgba(255,255,255,0.1); width: 50px; height: 50px; border-radius: 50%; backdrop-filter: blur(5px);"></div>
+        <div class="swiper-button-prev" style="color: #fff; background: rgba(255,255,255,0.1); width: 50px; height: 50px; border-radius: 50%; backdrop-filter: blur(5px);"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+
+<?php else: ?>
+<!-- Existing Hero Section -->
+<section class="hero" id="home" style="padding-top: 150px; padding-bottom: 100px; min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden;">
     <div class="container">
-        <h1 data-aos="fade-up">Innovative IT Solutions for <br>Modern Businesses</h1>
-        <p data-aos="fade-up" style="transition-delay: 0.1s;">
-            We deliver high-quality website design, web applications, and mobile apps that drive growth and efficiency.
-        </p>
-        <div data-aos="fade-up" style="transition-delay: 0.2s;">
-            <a href="#contact" class="btn-contact">Start a Project</a>
-            <a href="#services" style="margin-left: 20px; font-weight: 600; color: var(--secondary);">Explore Services <i class="fas fa-arrow-right"></i></a>
+        <div class="hero-grid">
+            <div data-aos="fade-right">
+
+                <span style="background: #fff0f7; color: var(--primary); padding: 8px 20px; border-radius: 50px; font-weight: 700; font-size: 14px; margin-bottom: 20px; display: inline-block; text-transform: uppercase; letter-spacing: 1px;">Welcome to OfferPlant</span>
+                <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; margin-bottom: 25px; color: var(--dark);">
+                    <?php echo $site['hero_heading'] ?? 'Empowering Your Business with <span style="color: var(--primary);">IT Solutions</span>'; ?>
+                </h1>
+                <p style="font-size: 1.2rem; color: var(--gray); margin-bottom: 40px; max-width: 600px; line-height: 1.8;">
+                    <?php echo $site['hero_subheading'] ?? 'We deliver innovative technology solutions to help you scale, grow, and succeed in the digital world. Professional web design, app development, and software solutions.'; ?>
+                </p>
+                <div class="hero-btns">
+                    <a href="<?php echo $site['hero_btn_link'] ?? '#contact'; ?>" class="btn btn-primary">
+                        <?php echo $site['hero_btn_text'] ?? 'Get Started Now'; ?> <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#services" class="btn btn-dark">Our Services</a>
+                </div>
+
+
+            </div>
+            
+            <div data-aos="fade-left" style="position: relative;">
+                <div style="position: absolute; width: 120%; height: 120%; background: radial-gradient(circle, #fff0f7 0%, transparent 70%); top: -10%; left: -10%; z-index: -1;"></div>
+                <?php if (isset($site['hero_banner']) && $site['hero_banner']): ?>
+                    <img src="uploads/<?php echo $site['hero_banner']; ?>" alt="Hero Banner" style="width: 100%; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);">
+                <?php else: ?>
+                    <img src="assets/images/hero.png" alt="Hero Banner" style="width: 100%; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);">
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 </section>
-<?php } ?>
+<?php endif; ?>
+
 
 
 <!-- Services Section -->
@@ -88,23 +134,41 @@ if (mysqli_num_rows($sliders_query) > 0) {
             <p style="margin-top: 15px; color: var(--gray);">Ready-to-use software solutions for various industries.</p>
         </div>
         
-        <div class="products-grid">
+        <div class="products-grid" style="<?php echo ($site['product_showcase_style'] ?? 'classic') == 'fresh' ? 'grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;' : ''; ?>">
             <?php
             $products_query = mysqli_query($conn, "SELECT * FROM products WHERE status = 1");
             $delay = 0;
             while($product = mysqli_fetch_assoc($products_query)) {
-                echo '
-                <div class="product-item" data-aos="fade-up" style="transition-delay: '.$delay.'s">
-                    <div class="product-icon"><i class="fas fa-cube"></i></div>
-                    <div>
-                        <h4 style="margin-bottom: 5px;">'.$product['name'].'</h4>
-                        <a href="'.$product['url'].'" target="_blank" style="color: var(--secondary); font-size: 14px; font-weight: 600;">Visit Product <i class="fas fa-external-link-alt" style="font-size: 10px;"></i></a>
-                    </div>
-                </div>';
+                if (($site['product_showcase_style'] ?? 'classic') == 'fresh') {
+                    echo '
+                    <div class="product-card" data-aos="fade-up" style="transition-delay: '.$delay.'s">
+                        <div class="product-badge">Featured</div>
+                        <div class="product-img-wrapper">
+                            <img src="'.(!empty($product['image']) ? 'uploads/'.$product['image'] : 'assets/images/hero.png').'" alt="'.$product['name'].'">
+                        </div>
+                        <div class="product-info">
+                            <h3>'.$product['name'].'</h3>
+                            <p>'.(isset($product['description']) ? substr($product['description'], 0, 100).'...' : 'Professional IT solution developed by OfferPlant Technologies.').'</p>
+                            <div class="product-action">
+                                <a href="'.$product['url'].'" target="_blank" class="product-link">Visit Product <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>';
+                } else {
+                    echo '
+                    <div class="product-item" data-aos="fade-up" style="transition-delay: '.$delay.'s">
+                        <div class="product-icon"><i class="fas fa-cube"></i></div>
+                        <div>
+                            <h4 style="margin-bottom: 5px;">'.$product['name'].'</h4>
+                            <a href="'.$product['url'].'" target="_blank" style="color: var(--secondary); font-size: 14px; font-weight: 600;">Visit Product <i class="fas fa-external-link-alt" style="font-size: 10px;"></i></a>
+                        </div>
+                    </div>';
+                }
                 $delay += 0.05;
             }
             ?>
         </div>
+
     </div>
 </section>
 

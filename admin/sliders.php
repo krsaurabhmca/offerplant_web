@@ -23,10 +23,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $btn_link = mysqli_real_escape_string($conn, $_POST['btn_link']);
     
     $image = "";
-    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        $image = time().'_'.rand(1000,9999).'.'.$ext;
-        move_uploaded_file($_FILES['image']['tmp_name'], "../uploads/".$image);
+    if (!empty($_POST['webp_image'])) {
+        $data = $_POST['webp_image'];
+        if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+            $data = substr($data, strpos($data, ',') + 1);
+            $data = base64_decode($data);
+            $image = time().'_slider.webp';
+            file_put_contents("../uploads/".$image, $data);
+        }
     }
 
     if (isset($_POST['add_slider'])) {
@@ -47,6 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: sliders.php");
     exit();
 }
+
 
 include 'includes/admin_header.php';
 include 'includes/admin_sidebar.php';
@@ -81,8 +86,8 @@ include 'includes/admin_sidebar.php';
                     </td>
                     <td><a href="'.$sl['btn_link'].'" target="_blank" class="btn btn-sm" style="background: #eee;">'.$sl['btn_text'].'</a></td>
                     <td>
-                        <button onclick=\'openEditModal('.$sl_data.')\' class="btn btn-sm" style="background:#f0f7ff; color:#007bff; margin-right:5px;">Edit</button>
-                        <a href="?delete='.$sl['id'].'" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-danger">Delete</a>
+                        <button onclick=\'openEditModal('.$sl_data.')\' class="btn btn-sm" style="background:#f0f7ff; color:#007bff; border-radius:8px; width:35px; height:35px; padding:0; display:inline-flex; align-items:center; justify-content:center;" title="Edit"><i class="fas fa-edit"></i></button>
+                        <a href="?delete='.$sl['id'].'" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-danger" style="border-radius:8px; width:35px; height:35px; padding:0; display:inline-flex; align-items:center; justify-content:center;" title="Delete"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>';
             }
@@ -116,7 +121,11 @@ include 'includes/admin_sidebar.php';
             </div>
             <div style="margin-bottom: 20px;">
                 <label style="display:block; margin-bottom: 5px;">Slider Image</label>
-                <input type="file" name="image" required style="width:100%;">
+                <input type="hidden" name="webp_image" id="add_webp_image">
+                <input type="file" accept="image/*" onchange="handleImageUpload(this, 'add_webp_image', 'add_preview')" required style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 8px;">
+                <div id="add_preview" style="margin-top: 10px; display:none;">
+                    <img src="" style="width: 100%; height: 100px; object-fit: cover; border-radius: 10px;">
+                </div>
             </div>
             <div style="display:flex; gap: 10px;">
                 <button type="submit" name="add_slider" class="btn btn-primary">Save Slider</button>
@@ -130,29 +139,33 @@ include 'includes/admin_sidebar.php';
 <div id="editModal" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
     <div style="background:#fff; width:500px; margin: 50px auto; padding: 30px; border-radius: 20px;">
         <h3>Edit Slider</h3>
-        <form method="POST" enctype="multipart/form-data" style="margin-top: 20px;">
+        <form method="POST">
             <input type="hidden" name="id" id="edit_id">
+            <input type="hidden" name="webp_image" id="edit_webp_image">
             <div style="margin-bottom: 15px;">
                 <label style="display:block; margin-bottom: 5px;">Slider Title</label>
                 <input type="text" name="title" id="edit_title" required style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 8px;">
             </div>
             <div style="margin-bottom: 15px;">
                 <label style="display:block; margin-bottom: 5px;">Subtitle</label>
-                <textarea name="subtitle" id="edit_subtitle" style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 8px; height: 60px;"></textarea>
+                <textarea name="subtitle" id="edit_subtitle" required style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 8px; height: 80px;"></textarea>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                 <div>
                     <label style="display:block; margin-bottom: 5px;">Button Text</label>
-                    <input type="text" name="btn_text" id="edit_btn_text" style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 8px;">
+                    <input type="text" name="btn_text" id="edit_btn_text" required style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 8px;">
                 </div>
                 <div>
                     <label style="display:block; margin-bottom: 5px;">Button Link</label>
-                    <input type="text" name="btn_link" id="edit_btn_link" style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 8px;">
+                    <input type="text" name="btn_link" id="edit_btn_link" required style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 8px;">
                 </div>
             </div>
             <div style="margin-bottom: 20px;">
-                <label style="display:block; margin-bottom: 5px;">Slider Image (Leave blank to keep current)</label>
-                <input type="file" name="image" style="width:100%;">
+                <label style="display:block; margin-bottom: 5px;">Change Image (Optional)</label>
+                <input type="file" accept="image/*" onchange="handleImageUpload(this, 'edit_webp_image', 'edit_preview')" style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 8px;">
+                <div id="edit_preview" style="margin-top: 10px;">
+                    <img id="edit_img_preview" src="" style="width: 100%; height: 100px; object-fit: cover; border-radius: 10px;">
+                </div>
             </div>
             <div style="display:flex; gap: 10px;">
                 <button type="submit" name="update_slider" class="btn btn-primary">Update Slider</button>
@@ -163,12 +176,54 @@ include 'includes/admin_sidebar.php';
 </div>
 
 <script>
+function handleImageUpload(input, hiddenId, previewId) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                const max = 1920; // 4K Ready resize for sliders
+                
+                if (width > max || height > max) {
+                    if (width > height) {
+                        height = Math.round((height * max) / width);
+                        width = max;
+                    } else {
+                        width = Math.round((width * max) / height);
+                        height = max;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                const webpData = canvas.toDataURL('image/webp', 0.85);
+                document.getElementById(hiddenId).value = webpData;
+                
+                const preview = document.getElementById(previewId);
+                preview.style.display = 'block';
+                preview.querySelector('img').src = webpData;
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
 function openEditModal(data) {
     document.getElementById('edit_id').value = data.id;
     document.getElementById('edit_title').value = data.title;
     document.getElementById('edit_subtitle').value = data.subtitle;
     document.getElementById('edit_btn_text').value = data.btn_text;
     document.getElementById('edit_btn_link').value = data.btn_link;
+    document.getElementById('edit_img_preview').src = '../uploads/' + data.image;
     document.getElementById('editModal').style.display = 'block';
 }
 </script>

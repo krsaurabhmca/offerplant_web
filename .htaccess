@@ -1,0 +1,24 @@
+Options -Indexes -MultiViews
+RewriteEngine On
+RewriteBase /offerplant/
+
+# SEO Friendly Gallery URLs
+RewriteRule ^gallery/?$ gallery.php [L,QSA]
+RewriteRule ^gallery/([^/]+)$ gallery.php?slug=$1 [L,QSA]
+
+# SEO Friendly Blog URLs
+RewriteRule ^blog/?$ blog.php [L,QSA]
+RewriteRule ^blog/([^/]+)$ blog-details.php?slug=$1 [L,QSA]
+
+# SEO Friendly Custom Page URLs
+RewriteRule ^p/([^/]+)$ page.php?slug=$1 [L,QSA]
+
+# Remove .php extension
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Gzip Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript application/json
+</IfModule>

@@ -10,13 +10,15 @@
         <div class="footer-grid">
             <div class="footer-col" data-aos="fade-up">
                 <a href="index.php" class="logo">
-                    <?php if (isset($site['logo']) && $site['logo'] && ($site['footer_theme'] ?? 'footer-dark') == 'footer-light'): ?>
-                        <img src="uploads/<?php echo $site['logo']; ?>" alt="<?php echo $site['site_name']; ?>" style="height: 50px; margin-bottom: 25px;">
-                    <?php else: ?>
-                        <img src="assets/images/logo.png" alt="OfferPlant" style="height: 50px; margin-bottom: 25px; filter: brightness(0) invert(1);">
-                    <?php endif; ?>
+                    <?php 
+                    $logo_src = !empty($site['logo']) ? "uploads/".$site['logo'] : "assets/images/logo.png";
+                    $is_light = ($site['footer_theme'] ?? 'footer-dark') == 'footer-light';
+                    $filter = $is_light ? 'filter: grayscale(100%);' : 'filter: brightness(0) invert(1);';
+                    ?>
+                    <img src="<?php echo $logo_src; ?>" alt="<?php echo $site['site_name'] ?? 'OfferPlant'; ?>" style="height: 55px; margin-bottom: 25px; <?php echo $filter; ?> transition: 0.3s;">
                 </a>
                 <p style="margin-bottom: 25px; line-height: 1.8; opacity: 0.8;">
+
                     <?php echo $site['meta_description']; ?>
                 </p>
                 <div class="social-links">
@@ -85,6 +87,49 @@
 <?php endif; ?>
 
 
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+<!-- Initialize Swiper -->
+<script>
+    const homeSlider = new Swiper('.home-slider', {
+        loop: true,
+        speed: 800,
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        effect: 'fade',
+        fadeEffect: {
+            crossFade: true
+        }
+    });
+
+    const testimonialSlider = new Swiper('.testimonial-slider', {
+        slidesPerView: 1,
+        spaceBetween: 30,
+        loop: true,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        breakpoints: {
+            768: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 }
+        }
+    });
+</script>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
 <script src="assets/js/main.js"></script>
 <script>
     // Simple AOS Implementation
@@ -106,6 +151,16 @@
 </script>
 
 </div> <!-- End Main Wrapper -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('SW Registered', reg))
+                .catch(err => console.log('SW Failed', err));
+        });
+    }
+</script>
 </body>
 </html>
+
 

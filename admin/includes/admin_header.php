@@ -14,48 +14,53 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css">
     
     <style>
-        /* DataTables Custom Styling - Premium Pagination */
-        .dataTables_wrapper .dataTables_paginate {
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 5px;
+        /* DataTables Custom Styling - Fix Vertical/Bulleted Pagination */
+        .dataTables_paginate {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: flex-end !important;
+            list-style-type: none !important;
+            margin: 25px 0 0 0 !important;
+            padding: 0 !important;
+            gap: 8px !important;
         }
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            padding: 6px 12px !important;
+        .dataTables_paginate li {
+            list-style: none !important;
             margin: 0 !important;
-            border: 1px solid #e2e8f0 !important;
-            border-radius: 8px !important;
+            padding: 0 !important;
+        }
+        .dataTables_paginate .paginate_button {
+            padding: 8px 20px !important;
+            border: 1px solid #f1f5f9 !important;
+            border-radius: 50px !important;
             background: #fff !important;
             color: #64748b !important;
-            font-size: 13px !important;
-            font-weight: 600 !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            text-decoration: none !important; /* Remove underline */
             cursor: pointer !important;
-            transition: 0.2s !important;
+            transition: all 0.3s ease !important;
+            display: inline-block !important;
+            line-height: 1 !important;
         }
         .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-            background: #f8fafc !important;
+            background: #fff0f7 !important;
             color: var(--primary) !important;
             border-color: var(--primary) !important;
         }
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current, 
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
             background: var(--primary) !important;
             color: #fff !important;
             border-color: var(--primary) !important;
-            box-shadow: 0 4px 10px rgba(255, 20, 147, 0.2);
+            box-shadow: 0 8px 20px rgba(255, 20, 147, 0.2) !important;
         }
-        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
-            opacity: 0.5 !important;
-            cursor: not-allowed !important;
-            background: #f1f5f9 !important;
-        }
-        .dataTables_wrapper .dataTables_paginate .previous,
-        .dataTables_wrapper .dataTables_paginate .next {
+        .dataTables_paginate .previous, .dataTables_paginate .next {
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
             background: #f8fafc !important;
-            font-weight: 700 !important;
         }
+
+
         
         .dataTables_wrapper .dataTables_filter input {
             border: 1px solid #e2e8f0 !important;
@@ -218,7 +223,120 @@
         .badge-success { background: #dcfce7; color: #15803d; }
         .badge-warning { background: #fef9c3; color: #854d0e; }
 
+        /* Native App Feel */
+        @media (max-width: 992px) {
+            .mobile-bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: #fff;
+                display: flex;
+                justify-content: space-around;
+                padding: 10px 0;
+                box-shadow: 0 -2px 15px rgba(0,0,0,0.05);
+                z-index: 1001;
+                border-top: 1px solid #f1f5f9;
+            }
+            .nav-item-mobile {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                color: #64748b;
+                text-decoration: none;
+                font-size: 10px;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            .nav-item-mobile i { font-size: 18px; }
+            .nav-item-mobile.active { color: var(--primary); }
+            
+            .sidebar { left: -100%; }
+            .sidebar.active { left: 0; }
+            .main-content { margin-left: 0; width: 100%; padding-bottom: 80px; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+        @media (min-width: 993px) {
+            .mobile-bottom-nav { display: none; }
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+            cursor: pointer;
+        }
+        .profile-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 220px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 1px solid #f1f5f9;
+            padding: 10px;
+            display: none;
+            margin-top: 10px;
+            z-index: 1000;
+        }
+        .profile-menu.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .profile-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px;
+            color: #475569;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.2s;
+            font-size: 13px;
+        }
+        .profile-item:hover {
+            background: #f8fafc;
+            color: var(--primary);
+        }
+        .profile-item i { font-size: 14px; opacity: 0.7; }
+        
+        .header-icon {
+            width: 35px; height: 35px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; color: #64748b; transition: 0.2s;
+            text-decoration: none;
+        }
+        .header-icon:hover { background: #f1f5f9; color: var(--primary); }
+
+        .btn { padding: 8px 16px; border-radius: 8px; } /* Slightly larger for touch */
+
     </style>
+
 </head>
 <body>
+
+<div class="mobile-bottom-nav">
+    <a href="index.php" class="nav-item-mobile <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">
+        <i class="fas fa-th-large"></i>
+        <span>Home</span>
+    </a>
+    <a href="blogs.php" class="nav-item-mobile <?php echo basename($_SERVER['PHP_SELF']) == 'blogs.php' ? 'active' : ''; ?>">
+        <i class="fas fa-blog"></i>
+        <span>Blogs</span>
+    </a>
+    <a href="enquiries.php" class="nav-item-mobile <?php echo basename($_SERVER['PHP_SELF']) == 'enquiries.php' ? 'active' : ''; ?>">
+        <i class="fas fa-envelope"></i>
+        <span>Leads</span>
+    </a>
+    <a href="settings.php" class="nav-item-mobile <?php echo basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'active' : ''; ?>">
+        <i class="fas fa-cog"></i>
+        <span>Setup</span>
+    </a>
+</div>
+
 

@@ -40,10 +40,16 @@
             </a>
         </li>
         <li class="nav-item">
+            <a href="albums.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'albums.php' || basename($_SERVER['PHP_SELF']) == 'gallery.php') ? 'active' : ''; ?>">
+                <i class="fas fa-photo-video"></i> Media Gallery
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="faqs.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'faqs.php' ? 'active' : ''; ?>">
                 <i class="fas fa-question-circle"></i> Manage FAQs
             </a>
         </li>
+
 
         <div class="nav-group-label">Appearance</div>
         <li class="nav-item">
@@ -91,18 +97,47 @@
             <h2 style="font-size: 20px; font-weight: 700; color: #333;">Admin Dashboard</h2>
         </div>
         
-        <div class="header-right">
+        <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
             <a href="../index.php" target="_blank" class="header-icon" title="View Website">
-                <i class="fas fa-external-link-alt"></i>
+                <i class="fas fa-globe"></i>
             </a>
-            <div class="user-info">
-                <span style="font-size: 14px; color: #666; display: none; @media(min-width: 600px){display: block;}">Hi, <strong><?php echo $_SESSION['admin_name']; ?></strong></span>
-                <div class="avatar"><?php echo strtoupper(substr($_SESSION['admin_name'], 0, 1)); ?></div>
+            <div class="header-icon" title="Notifications">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="profile-dropdown" onclick="toggleProfileMenu()">
+                <div class="user-info" style="display: flex; align-items: center; gap: 10px;">
+                    <div class="avatar"><?php echo strtoupper(substr($_SESSION['admin_name'], 0, 1)); ?></div>
+                    <i class="fas fa-chevron-down" style="font-size: 10px; color: #94a3b8;"></i>
+                </div>
+                <div class="profile-menu" id="profileMenu">
+                    <div style="padding: 10px 15px; border-bottom: 1px solid #f1f5f9; margin-bottom: 5px;">
+                        <p style="font-size: 13px; font-weight: 700; color: #1e293b;"><?php echo $_SESSION['admin_name']; ?></p>
+                        <p style="font-size: 11px; color: #64748b;">Administrator</p>
+                    </div>
+                    <a href="profile.php" class="profile-item"><i class="fas fa-user-circle"></i> My Profile</a>
+                    <a href="settings.php" class="profile-item"><i class="fas fa-cog"></i> Account Settings</a>
+                    <div style="border-top: 1px solid #f1f5f9; margin-top: 5px; padding-top: 5px;">
+                        <a href="logout.php" class="profile-item" style="color: #dc2626;"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+    function toggleProfileMenu() {
+        document.getElementById('profileMenu').classList.toggle('show');
+    }
+    
+    // Close dropdown on click outside
+    window.addEventListener('click', function(e) {
+        const dropdown = document.querySelector('.profile-dropdown');
+        const menu = document.getElementById('profileMenu');
+        if (!dropdown.contains(e.target)) {
+            menu.classList.remove('show');
+        }
+    });
+
     function toggleSidebar() {
         const sidebar = document.querySelector('.sidebar');
         const mainContent = document.querySelector('.main-content');

@@ -122,8 +122,8 @@ include 'includes/admin_sidebar.php';
                     <td><strong>'.$b['title'].'</strong><br><small style="color:#888;">/'.$b['slug'].'</small></td>
                     <td>'.date('d M Y', strtotime($b['created_at'])).'</td>
                     <td>
-                        <button onclick=\'openEditModal('.$b_data.')\' class="btn btn-sm" style="background:#f0f7ff; color:#007bff; margin-right:5px;">Edit</button>
-                        <a href="?delete='.$b['id'].'" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-danger">Delete</a>
+                        <button onclick=\'openEditModal('.$b_data.')\' class="btn btn-sm" style="background:#f0f7ff; color:#007bff; border-radius:8px; width:35px; height:35px; padding:0; display:inline-flex; align-items:center; justify-content:center;" title="Edit"><i class="fas fa-edit"></i></button>
+                        <a href="?delete='.$b['id'].'" onclick="return confirm(\'Are you sure?\')" class="btn btn-sm btn-danger" style="border-radius:8px; width:35px; height:35px; padding:0; display:inline-flex; align-items:center; justify-content:center;" title="Delete"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>';
             }

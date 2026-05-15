@@ -9,8 +9,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_settings'])) {
         'facebook_url', 'twitter_url', 'linkedin_url', 'instagram_url', 'youtube_url',
         'whatsapp_number', 'whatsapp_status', 'google_map', 'popup_status', 'site_theme',
         'footer_theme', 'topbar_theme', 'menu_layout', 'google_analytics',
-        'header_sticky', 'layout_view'
+        'header_sticky', 'layout_view',
+        'hero_heading', 'hero_subheading', 'hero_btn_text', 'hero_btn_link',
+        'home_hero_type', 'product_showcase_style'
     ];
+
+
+
 
 
 
@@ -39,6 +44,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_settings'])) {
         if (move_uploaded_file($_FILES['popup_image']['tmp_name'], "../uploads/".$popup_image)) {
             mysqli_query($conn, "INSERT INTO site_settings (meta_key, meta_value) VALUES ('popup_image', '$popup_image') ON DUPLICATE KEY UPDATE meta_value = '$popup_image'");
         }
+    }
+    // Handle Hero Banner Upload
+    if (isset($_FILES['hero_banner']) && $_FILES['hero_banner']['name']) {
+        $ext = pathinfo($_FILES['hero_banner']['name'], PATHINFO_EXTENSION);
+        $banner_name = 'hero_banner_' . time() . '.' . $ext;
+        move_uploaded_file($_FILES['hero_banner']['tmp_name'], '../uploads/' . $banner_name);
+        mysqli_query($conn, "UPDATE site_settings SET meta_value = '$banner_name' WHERE meta_key = 'hero_banner'");
     }
 
 
@@ -88,6 +100,7 @@ include 'includes/admin_sidebar.php';
 
 <div class="settings-tabs">
     <button class="tab-btn active" onclick="showTab('general')"><i class="fas fa-cog" style="margin-right: 8px;"></i> General</button>
+    <button class="tab-btn" onclick="showTab('hero')"><i class="fas fa-home" style="margin-right: 8px;"></i> Hero Section</button>
     <button class="tab-btn" onclick="showTab('appearance')"><i class="fas fa-palette" style="margin-right: 8px;"></i> Appearance</button>
     <button class="tab-btn" onclick="showTab('seo')"><i class="fas fa-search" style="margin-right: 8px;"></i> SEO & Marketing</button>
     <button class="tab-btn" onclick="showTab('social')"><i class="fas fa-share-alt" style="margin-right: 8px;"></i> Social & Contact</button>
@@ -125,6 +138,48 @@ include 'includes/admin_sidebar.php';
                 <textarea name="address" required class="form-control" style="height: 100px;"><?php echo $site['address']; ?></textarea>
             </div>
         </div>
+
+        <div id="hero" class="tab-content">
+            <div class="form-group">
+                <label>Hero Section Type</label>
+                <select name="home_hero_type" class="form-control">
+                    <option value="hero" <?php echo ($site['home_hero_type'] ?? 'hero') == 'hero' ? 'selected' : ''; ?>>Static Hero (Single Image)</option>
+                    <option value="slider" <?php echo ($site['home_hero_type'] ?? '') == 'slider' ? 'selected' : ''; ?>>Dynamic Slider (Multi-Image)</option>
+                </select>
+                <small style="color: #64748b;">If 'Dynamic Slider' is selected, you can manage slides in the 'Sliders' module.</small>
+            </div>
+            <hr style="margin: 20px 0; border-top: 1px dashed #eee;">
+            <div class="form-group">
+
+                <label>Hero Heading (Main Title)</label>
+                <input type="text" name="hero_heading" value="<?php echo $site['hero_heading'] ?? ''; ?>" class="form-control" placeholder="e.g. Empowering Your Business with IT Solutions">
+            </div>
+            <div class="form-group">
+                <label>Hero Subheading (Short Description)</label>
+                <textarea name="hero_subheading" class="form-control" style="height: 80px;"><?php echo $site['hero_subheading'] ?? ''; ?></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                <div class="form-group">
+                    <label>CTA Button Text</label>
+                    <input type="text" name="hero_btn_text" value="<?php echo $site['hero_btn_text'] ?? 'Get Started'; ?>" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>CTA Button Link</label>
+                    <input type="text" name="hero_btn_link" value="<?php echo $site['hero_btn_link'] ?? '#contact'; ?>" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Main Hero Banner Image</label>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <?php if (isset($site['hero_banner']) && $site['hero_banner']): ?>
+                        <img src="../uploads/<?php echo $site['hero_banner']; ?>" style="width: 150px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    <?php endif; ?>
+                    <input type="file" name="hero_banner" class="form-control" style="padding: 8px;">
+                </div>
+                <small style="color: #64748b; margin-top: 5px; display: block;">Recommended size: 1920x1080px (High Quality PNG/JPG)</small>
+            </div>
+        </div>
+
 
         <!-- Appearance Tab -->
         <div id="appearance" class="tab-content">

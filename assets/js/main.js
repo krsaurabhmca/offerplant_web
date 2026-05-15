@@ -25,13 +25,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Header scroll effect
     const header = document.querySelector('header');
+    const topBar = document.querySelector('.top-bar');
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.style.padding = '10px 0';
-            header.style.background = 'rgba(255, 255, 255, 0.95)';
+        if (window.scrollY > 40) {
+            header.classList.add('scrolled');
+            if(topBar) topBar.style.transform = 'translateY(-100%)';
         } else {
-            header.style.padding = '15px 0';
-            header.style.background = 'rgba(255, 255, 255, 0.8)';
+            header.classList.remove('scrolled');
+            if(topBar) topBar.style.transform = 'translateY(0)';
         }
     });
+
 });

@@ -60,7 +60,13 @@ include 'includes/admin_sidebar.php';
                     <td><strong>'.$p['name'].'</strong><br><small class="badge" style="background:#fff0f7; color:var(--primary);">'.$p['badge'].'</small></td>
                     <td><del>₹'.$p['price'].'</del></td>
                     <td style="color:var(--secondary); font-weight:700;">₹'.$p['offer_price'].'</td>
-                    <td style="max-width: 200px; font-size: 13px;">'.nl2br($p['features']).'</td>
+                    <td style="max-width: 250px; font-size: 12px; color: #64748b; line-height: 1.5;">
+                        <div style="max-height: 60px; overflow-y: auto; padding-right: 5px;">
+                            <i class="fas fa-list-ul" style="margin-right: 5px; color: var(--primary); opacity: 0.5;"></i> 
+                            '.(!empty($p['features']) ? nl2br($p['features']) : '<span style="color:#ccc;">No features added</span>').'
+                        </div>
+                    </td>
+
                     <td>'.($p['offer_ends'] ? date('d M Y, h:i A', strtotime($p['offer_ends'])) : 'N/A').'</td>
                     <td>
                         <button onclick=\'openEditModal('.$p_data.')\' class="btn btn-sm" style="background:#f0f7ff; color:#007bff; margin-right:5px;">Edit</button>
