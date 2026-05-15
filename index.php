@@ -113,9 +113,13 @@
             <?php
             $services_query = mysqli_query($conn, "SELECT * FROM services WHERE status = 1");
             while($service = mysqli_fetch_assoc($services_query)) {
+                $icon = $service['icon'];
+                $is_brand = preg_match('/^(fa-whatsapp|fa-android|fa-apple|fa-facebook|fa-twitter|fa-instagram|fa-linkedin|fa-youtube|fa-google|fa-windows)$/', $icon);
+                $prefix = $is_brand ? 'fab' : 'fas';
+                
                 echo '
                 <div class="service-card" data-aos="fade-up">
-                    <i class="fas '.$service['icon'].'"></i>
+                    <i class="'.$prefix.' '.$icon.'"></i>
                     <h3>'.$service['title'].'</h3>
                     <p>'.$service['description'].'</p>
                 </div>';
